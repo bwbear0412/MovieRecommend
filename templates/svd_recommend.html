@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title></title>
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.css' %}">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
+
+    <script src="{% static 'jquery-3.4.1/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
+    <!-- Latest compiled and minified Locales -->
+    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/locale/bootstrap-table-zh-CN.min.js"></script>
+</head>
+<body>
+{% if messages %}
+    <h3 class="text-center">{{ messages }},请回到<a href="{% url 'index' %}">首页</a>对电影进行评分</h3>
+{% else %}
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'index' %}">回到首页</a></li>
+                    <li><a href="{% url 'user_recommend' %}">推荐1</a></li>
+                    <li><a href="{% url 'item_recommend' %}">推荐2</a></li>
+                    <li><a href="{% url 'svd_recommend' %}">推荐3</a></li>
+                </ul>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
+                        <li><a>{{ user.username }}</a></li>
+                        <li><a href="{% url 'auth_logout' %}">登出</a></li>
+                    {% else %}
+                        <li><a href="{% url 'auth_login' %}">登录</a></li>
+                        <li><a href="{% url 'auth_register' %}">注册</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <table id="movies-table" data-toggle="table" class="table table-border table-striped"></table>
+    </div>
+{% endif %}
+</body>
+<script>
+    const $moviesTable = $('#movies-table').bootstrapTable('destroy').bootstrapTable({
+        url: '{% url 'svd_recommend_table' %}',
+        method: 'GET',
+        dataType: 'json',
+        uniqueId: 'movie_id',
+        striped: true,
+        cache: false,
+        sortName: 'movie_id',
+        sortOrder: 'desc',
+        sidePagination: 'server',
+        undefinedText: 'movie_name',
+        singleSelect: false,
+        toolbar: '#soft-toolbar',
+        search: false,
+        strictSearch: true,
+        clickToSelect: true,
+        pagination: false,
+        showLoading: false,
+        columns: [
+            {
+                field: 'movie_name',
+                width: '300px',
+                sortable: true,
+                title: '电影名称',
+            },
+            {
+                field: 'movie_type',
+                width: '180px',
+                title: '类型',
+            },
+            {
+                field: 'movie_director',
+                width: '300px',
+                title: '导演',
+            },
+            {
+                field: 'movie_point',
+                width: '40px',
+                title: '大众评分',
+            }
+        ],
+    });
+</script>
+</html>

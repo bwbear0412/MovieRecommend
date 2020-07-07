@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title></title>
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.css' %}">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
+
+    <script src="{% static 'jquery-3.4.1/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
+    <!-- Latest compiled and minified Locales -->
+    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/locale/bootstrap-table-zh-CN.min.js"></script>
+</head>
+<body>
+{% if messages %}
+    <h3 class="text-center">{{ messages }},请回到<a href="{% url 'index' %}">首页</a>对电影进行评分</h3>
+{% else %}
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'index' %}">回到首页</a></li>
+                </ul>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
+                        <li class="dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'auth_center' %}">用户个人中心</a></li>
+                                <li class="divider"></li>
+                                {#                            <li><a href="{% url 'auth_change_profile' %}">编辑用户个人信息</a></li>#}
+                                {#                            <li class="divider"></li>#}
+                                {#                            <li><a href="{% url 'auth_change_password' %}">修改密码</a></li>#}
+                                {#                            <li class="divider"></li>#}
+                                <li><a href="{% url 'show_user_rating' %}">我的评分</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">我的收藏</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{% url 'auth_logout' %}">登出</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'auth_login' %}">登录</a></li>
+                        <li><a href="{% url 'auth_register' %}">注册</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <table id="movies-table" data-toggle="table" class="table table-border table-striped"></table>
+    </div>
+{% endif %}
+</body>
+<script>
+    const $moviesTable = $('#movies-table').bootstrapTable('destroy').bootstrapTable({
+        url: '{% url 'show_user_rating_table' %}',
+        method: 'GET',
+        dataType: 'json',
+        uniqueId: 'movie_id',
+        striped: true,
+        cache: false,
+        sortName: 'movie_id',
+        sortOrder: 'desc',
+        sidePagination: 'server',
+        undefinedText: 'movie_name',
+        singleSelect: false,
+        toolbar: '#soft-toolbar',
+        search: false,
+        strictSearch: true,
+        clickToSelect: true,
+        pagination: false,
+        showLoading: false,
+        columns: [
+            {
+                field: 'movie_name',
+                width: '400%',
+                sortable: true,
+                title: '电影名称',
+            },
+            {
+                field: 'movie_type',
+                width: '400%',
+                title: '电影类型',
+            },
+            {#{#}
+            {#    field: 'movie_point',#}
+            {#    width: '400%',#}
+            {#    title: '我的评分',#}
+            {#},#}
+            {
+                title: '操作',
+                width: '400%',
+                formatter: function (value, row, index) {
+                    {#return '<div>\n' +#}
+                    {#    '    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#' + row.movie_id + '">修改</button>\n' +#}
+                    {#    '    <div class="modal" id="' + row.movie_id + '" tabindex="-1" role="dialog" aria-hidden="true">\n' +#}
+                    {#    '        <div class="modal-dialog">\n' +#}
+                    {#    '            <div class="modal-content">\n' +#}
+                    {#    '                <div class="modal-header">\n' +#}
+                    {#    '                    <h4 class="modal-title">' + row.movie_name + '</h4>\n' +#}
+                    {#    '                </div>\n' +#}
+                    {#    '                <div class="modal-body">\n' +#}
+                    {#    '                    <h5>请选择分数</h5>' +#}
+                    {#    '                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',1)" data-dismiss="modal">1分\n' +#}
+                    {#    '                    </button>\n' +#}
+                    {#    '                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',1.5)" data-dismiss="modal">1.5分\n' +#}
+                    {#    '                    </button>\n' +#}
+                    {#    '                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',2)" data-dismiss="modal">2分\n' +#}
+                    {#    '                    </button>\n' +#}
+                    {#    '                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',2.5)" data-dismiss="modal">2.5分\n' +#}
+                    {#    '                    </button>\n' +#}
+                    {#    '                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',3)" data-dismiss="modal">3分\n' +#}
+                    {#    '                    </button>\n' +#}
+                    {#    '                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',3.5)" data-dismiss="modal">3.5分\n' +#}
+                    {#    '                    </button>\n' +#}
+                    {#    '                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',4)" data-dismiss="modal">4分\n' +#}
+                    {#    '                    </button>\n' +#}
+                    {#    '                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',4.5)" data-dismiss="modal">4.5分\n' +#}
+                    {#    '                    </button>\n' +#}
+                    {#    '                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',5)" data-dismiss="modal">5分\n' +#}
+                    {#    '                    </button>\n' +#}
+                    {#    '                </div>\n' +#}
+                    {#    '                <div class="modal-footer">\n' +#}
+                    {#    '                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>\n' +#}
+                    {#    '                </div>\n' +#}
+                    {#    '            </div>\n' +#}
+                    {#    '        </div>\n' +#}
+                    {#    '    </div>\n' +#}
+                    {#    '    <button class="btn btn-default btn-sm" onclick="delete_rating(' + row.movie_id + ')">删除</button>\n' +#}
+                    {#    '</div>'#}
+                    return '<div><button class="btn btn-primary btn-sm">取消收藏</div>'
+                }
+            }
+        ],
+    });
+
+    function rating(movie_id, movie_point) {
+        $.ajax({
+            url: '{% url 'rating' %}',
+            type: 'POST',
+            data: {movie_id: movie_id, movie_point: movie_point},
+            dataType: 'json',
+            success: function (data) {
+                $moviesTable.bootstrapTable('refresh');
+                alert("评分成功");
+            },
+            error: function (data) {
+            }
+        })
+    }
+
+    function delete_rating(movie_id) {
+        $.ajax({
+            url: '{% url 'delete_user_rating' %}',
+            method: 'POST',
+            data: {'movie_id': movie_id},
+            dataType: 'json',
+            success: function (data) {
+                $moviesTable.bootstrapTable('refresh');
+                alert('删除成功');
+            },
+            error: function (data) {
+
+            }
+        })
+    }
+</script>
+</html>

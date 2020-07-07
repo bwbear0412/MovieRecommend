@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title></title>
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.css' %}">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
+
+    <script src="{% static 'jquery-3.4.1/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
+    <!-- Latest compiled and minified Locales -->
+    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/locale/bootstrap-table-zh-CN.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav">
+                {#                <li class="dropdown">#}
+                {#                    <a href="" class="dropdown-toggle" data-toggle="dropdown">个性化推荐<b class="caret"></b></a>#}
+                {#                    <ul class="dropdown-menu">#}
+                {#                        <li><a href="{% url 'user_recommend' %}">推荐1</a></li>#}
+                {#                        <li class="divider"></li>#}
+                {#                        <li><a href="{% url 'item_recommend' %}">推荐2</a></li>#}
+                {#                        <li class="divider"></li>#}
+                {#                        <li><a href="{% url 'svd_recommend' %}">推荐3</a></li>#}
+                {#                    </ul>#}
+                {#                </li>#}
+                {#                <li class="dropdown">#}
+                {#                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">大众推荐<b class="caret"></b></a>#}
+                {#                    <ul class="dropdown-menu">#}
+                {#                        <li><a href="{% url 'hot_recommend' %}">热门推荐</a></li>#}
+                {#                        <li class="divider"></li>#}
+                {#                        <li><a href="{% url 'popular_recommend' %}">高分推荐</a></li>#}
+                {#                    </ul>#}
+                {#                </li>#}
+                <li class="dropdown">
+                    <a href="" class="dropdown-toggle" data-toggle="dropdown">电影类型</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">动作</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">剧情</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">爱情</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">喜剧</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">动画</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">科幻</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">犯罪</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">恐怖</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 'item_recommend' %}">个性化推荐</a></li>
+            </ul>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li class="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'auth_center' %}">用户个人中心</a></li>
+                            <li class="divider"></li>
+                            {#                            <li><a href="{% url 'auth_change_profile' %}">编辑用户个人信息</a></li>#}
+                            {#                            <li class="divider"></li>#}
+                            {#                            <li><a href="{% url 'auth_change_password' %}">修改密码</a></li>#}
+                            {#                            <li class="divider"></li>#}
+                            <li><a href="{% url 'show_user_rating' %}">我的评分</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">我的收藏</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{% url 'auth_logout' %}">登出</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'auth_login' %}">登录</a></li>
+                    <li><a href="{% url 'auth_register' %}">注册</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    {#    <input id="search-keyword" placeholder="电影名称|电影类型|年份">#}
+    <input id="search-keyword" placeholder="电影名称">
+    <button id="search-button">查询</button>
+</div>
+<div class="container-fluid">
+    <table id="movies-table" data-toggle="table" class="table table-bordered table-striped"></table>
+</div>
+
+
+{#<div>#}
+{#    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">修改</button>#}
+{#    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">#}
+{#        <div class="modal-dialog">#}
+{#            <div class="modal-content">#}
+{#                <div class="modal-header">#}
+{#                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>#}
+{#                    <h4 class="modal-title" id="myModalLabel">请选择分数</h4>#}
+{#                </div>#}
+{#                <div class="modal-body">#}
+{#                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',1)">1#}
+{#                    </button>#}
+{#                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',2)">2#}
+{#                    </button>#}
+{#                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',3)">3#}
+{#                    </button>#}
+{#                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',4)">4#}
+{#                    </button>#}
+{#                    <button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',5)">5#}
+{#                    </button>#}
+{#                </div>#}
+{#                <div class="modal-footer">#}
+{#                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#    <button class="btn btn-default btn-sm" onclick="delete_rating(' + row.movie_id + ')">删除</button>#}
+{#</div>#}
+{#<div>#}
+{#    {% if user.is_authenticated %}#}
+{#        <h3>欢迎:{{ user.username }}</h3>#}
+{#        <a href="{% url 'auth_logout' %}">登出</a>#}
+{#    {% else %}#}
+{#        <a href="{% url 'auth_login' %}">登录</a>#}
+{#        <a href="{% url 'auth_register' %}">注册</a>#}
+{#    {% endif %}#}
+{#</div>#}
+{#<div>#}
+{#    <a href="{% url 'user_recommend' %}">查看推荐1</a>#}
+{#    <a href="{% url 'item_recommend' %}">查看推荐2</a>#}
+{#    <a href="{% url 'svd_recommend' %}">查看推荐3</a>#}
+{#</div>#}
+{#<div style="padding: 20px">#}
+{#    <table id="movies-table" data-toggle="table" class="table table-bordered table-striped"></table>#}
+{#</div>#}
+<script>
+    const $moviesTable = $('#movies-table').bootstrapTable('destroy').bootstrapTable({
+        url: '{% url 'test' %}',
+        method: 'GET',
+        dataType: 'json',
+        uniqueId: 'movie_id',
+        striped: false,
+        cache: false,
+        silent: true,//记忆排序
+        sortName: 'movie_id',
+        sortOrder: 'desc',
+        sidePagination: 'server',
+        undefinedText: 'movie_name',
+        singleSelect: false,
+        toolbar: '#soft-toolbar',
+        search: false,
+        pagination: true,
+        pageNumber: 1,
+        pageSize: 10,
+        pageList: [10, 20, 50, 100],
+        paginationPreText: "上一页",
+        paginationNextText: "下一页",
+        queryParamsType: "",
+        queryParams: function (params) {
+            return {
+                'pageSize': params.pageSize,
+                'pageNumber': params.pageNumber,
+                'searchText': params.searchText,
+                'sortName': params.sortName,
+                'sortOrder': params.sortOrder,
+                'searchKeyword': $('#search-keyword').val(),
+            };
+        },
+        showLoading: false,
+        columns: [
+            {
+                field: 'movie_name',
+                width: '400%',
+                title: '电影名称',
+            },
+            {
+                field: 'movie_type',
+                width: '400%',
+                title: '电影类型',
+            },
+            {#{#}
+            {#    title: '请评分',#}
+            {#    width: '400%',#}
+            {#    formatter: function (value, row, index) {#}
+            {#        return '<button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',1)">1分</button>' +#}
+            {#            '<button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',1.5)">1.5分</button>' +#}
+            {#            '<button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',2)">2分</button>' +#}
+            {#            '<button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',2.5)">2.5分</button>' +#}
+            {#            '<button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',3)">3分</button>' +#}
+            {#            '<button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',3.5)">3.5分</button>' +#}
+            {#            '<button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',4)">4分</button>' +#}
+            {#            '<button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',4.5)">4.5分</button>' +#}
+            {#            '<button type="button" class="btn btn-primary btn-sm" onclick="rating(' + row.movie_id + ',5)">5分</button>'#}
+            {#    }#}
+            {#}#}
+        ],
+    });
+
+    function rating(movie_id, movie_point) {
+        $.ajax({
+            url: '{% url 'rating' %}',
+            type: 'POST',
+            data: {movie_id: movie_id, movie_point: movie_point},
+            dataType: 'json',
+            success: function (data) {
+                alert("评分成功");
+                $moviesTable.bootstrapTable('refresh');
+            },
+            error: function (data) {
+            }
+        })
+    }
+
+    $(function () {
+        $('#search-button').click(function () {
+            $('#movies-table').bootstrapTable('refresh', {pageNumber: 1});
+        })
+    })
+</script>
+</body>
+</html>
